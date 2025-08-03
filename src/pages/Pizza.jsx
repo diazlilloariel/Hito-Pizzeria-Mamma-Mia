@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom"; // ← Importante
 
 const Pizza = () => {
+  const { idpizza } = useParams(); // ← Captura el parámetro de la URL
   const [pizza, setPizza] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -8,7 +10,7 @@ const Pizza = () => {
   useEffect(() => {
     const fetchPizza = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/pizzas/p001");
+        const res = await fetch(`http://localhost:5000/api/pizzas/${idpizza}`); // ← ruta dinámica
         if (!res.ok) throw new Error("Error al obtener la pizza");
         const data = await res.json();
         setPizza(data);
@@ -21,7 +23,7 @@ const Pizza = () => {
     };
 
     fetchPizza();
-  }, []);
+  }, [idpizza]);
 
   if (loading) {
     return (
@@ -34,7 +36,7 @@ const Pizza = () => {
   }
 
   if (error || !pizza) {
-    return <p className="text-center text-danger mt-5">Error al cargar la pizza.</p>;
+    return <p className="text-center text-danger mt-5">Pizza no encontrada.</p>;
   }
 
   return (
@@ -44,7 +46,7 @@ const Pizza = () => {
         <div className="card-body">
           <h2 className="card-title text-capitalize">{pizza.name}</h2>
           <h4 className="text-success mb-3">
-            ${pizza.price.toLocaleString("es-CL")}
+            {pizza.price.toLocaleString("es-CL", { style: "currency", currency: "CLP" })}
           </h4>
           <h5>Ingredientes:</h5>
           <ul>
@@ -53,7 +55,7 @@ const Pizza = () => {
             ))}
           </ul>
           <p className="mt-3">{pizza.desc}</p>
-          <button className="btn btn-success mt-3" >
+          <button className="btn btn-success mt-3">
             <i className="fas fa-cart-plus me-2"></i> Añadir
           </button>
         </div>

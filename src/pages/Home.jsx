@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import CardPizza from "./CardPizza";
-import Header from "./Header";
+import CardPizza from "../components/CardPizza";
+import Header from "../components/Header";
 
 const Home = () => {
   const [pizzas, setPizzas] = useState([]);
@@ -27,7 +27,10 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "50vh" }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Cargando...</span>
         </div>
@@ -35,7 +38,12 @@ const Home = () => {
     );
   }
 
-  if (error) return <p className="text-center text-danger mt-5">Error al cargar las pizzas.</p>;
+  if (error)
+    return (
+      <p className="text-center text-danger mt-5">
+        Error al cargar las pizzas.
+      </p>
+    );
 
   return (
     <>
@@ -45,6 +53,7 @@ const Home = () => {
           {pizzas.map((pizza) => (
             <div className="col-md-4 mb-4" key={pizza.id}>
               <CardPizza
+                id={pizza.id}
                 img={pizza.img}
                 name={pizza.name}
                 ingredients={pizza.ingredients}
