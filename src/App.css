@@ -51,3 +51,44 @@
   justify-content: center;
 
 }
+
+.dark-theme {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.light-theme {
+  background-color: #ffffff;
+  color: #000000;
+} 
+
+body.bg-dark .card {
+  background-color: #1f2937;   /* gris oscuro */
+  color: #f8f9fa;              /* texto claro */
+  border-color: #2d3748;       /* borde discreto */
+}
+
+body.bg-dark .card .card-title,
+body.bg-dark .card .card-text {
+  color: #f8f9fa;
+}
+
+body.bg-dark .list-group-item {
+  background-color: #1f2937;
+  color: #f8f9fa;
+  border-color: #2d3748;
+}
+
+body.bg-dark .card .btn-outline-info {
+  color: #f8f9fa;
+  border-color: #f8f9fa;
+}
+
+body.bg-dark .card .btn-outline-info:hover {
+  background-color: #f8f9fa;
+  color: #1f2937;
+}
+
+body {
+  padding-top: 25px; /* Ajusta si tu Navbar es más alta o más baja */
+}

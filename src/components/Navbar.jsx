@@ -1,15 +1,23 @@
 import { Link } from "react-router-dom";
+import { useTheme } from "../context/ThemeProvider";
+import { useCart } from "../context/CartProvider";
 
 const Navbar = () => {
-  const total = 25000;
   const token = false;
+  const { theme, toggleTheme } = useTheme();
+  const { total, itemCount } = useCart();
 
   return (
-    <nav className="navbar fondo-nav navbar-expand-lg bg-body-tertiary">
+    <nav
+      className={`navbar fondo-nav navbar-expand-lg fixed-top ${
+        theme === "dark" ? "bg-dark navbar-dark" : "bg-body-tertiary"
+      }`}
+    >
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
           Pizzería Mamma Mia!
         </Link>
+
         <button
           className="navbar-toggler"
           type="button"
@@ -21,6 +29,7 @@ const Navbar = () => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
+
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
@@ -28,6 +37,7 @@ const Navbar = () => {
                 Home
               </Link>
             </li>
+
             {token ? (
               <>
                 <li className="nav-item">
@@ -56,14 +66,36 @@ const Navbar = () => {
               </>
             )}
           </ul>
-          <Link to="/cart" className="btn btn-outline-info d-flex align-items-center ms-3 btn-price">
+
+          <Link
+            to="/cart"
+            className="btn btn-success d-flex align-items-center ms-3 btn-price position-relative"
+            title="Ver carrito"
+          >
             <i className="fas fa-shopping-cart me-2"></i>
-            Total:{" "}
-            {total.toLocaleString("es-CL", {
-              style: "currency",
-              currency: "CLP",
-            })}
+            {itemCount > 0 && (
+              <span
+                className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style={{ fontSize: "0.75rem" }}
+              >
+                {itemCount}
+              </span>
+            )}
+            <span>
+              Total:{" "}
+              {total.toLocaleString("es-CL", {
+                style: "currency",
+                currency: "CLP",
+              })}
+            </span>
           </Link>
+
+          <button
+            className="btn btn-outline-secondary ms-2"
+            onClick={toggleTheme}
+          >
+            {theme === "light" ? "🌙 Modo oscuro" : "☀️ Modo claro"}
+          </button>
         </div>
       </div>
     </nav>

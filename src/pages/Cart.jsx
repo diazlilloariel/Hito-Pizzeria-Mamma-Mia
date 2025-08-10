@@ -1,59 +1,15 @@
-import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useCart } from "../context/CartProvider";
 
 const Cart = () => {
-  const [cart, setCart] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { cart, increment, decrement, removeItem, clearCart, total } = useCart();
 
-  useEffect(() => {
-    const fetchPizzas = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/pizzas");
-        if (!res.ok) throw new Error("Error al obtener las pizzas");
-        const data = await res.json();
-
-        const pizzasConCantidad = data.map((pizza) => ({
-          ...pizza,
-          quantity: 1,
-        }));
-
-        setCart(pizzasConCantidad);
-      } catch (err) {
-        console.error("Error al cargar las pizzas:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPizzas();
-  }, []);
-
-  const increaseQuantity = (id) => {
-    const updatedCart = cart.map((pizza) =>
-      pizza.id === id ? { ...pizza, quantity: pizza.quantity + 1 } : pizza
-    );
-    setCart(updatedCart);
-  };
-
-  const decreaseQuantity = (id) => {
-    const updatedCart = cart
-      .map((pizza) =>
-        pizza.id === id ? { ...pizza, quantity: pizza.quantity - 1 } : pizza
-      )
-      .filter((pizza) => pizza.quantity > 0);
-    setCart(updatedCart);
-  };
-
-  const total = cart.reduce(
-    (acc, pizza) => acc + pizza.price * pizza.quantity,
-    0
-  );
-
-  if (loading) {
+  if (!cart.length) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </div>
+      <div className="container mt-5 text-center">
+        <h2 className="mb-3">Tu carrito está vacío</h2>
+        <p className="text-muted">Agrega pizzas desde el inicio para verlas aquí.</p>
+        <Link to="/" className="btn btn-primary mt-2">Ir al Home</Link>
       </div>
     );
   }
@@ -74,35 +30,58 @@ const Cart = () => {
               style={{ width: "100px", height: "100px", objectFit: "cover" }}
               className="me-3 rounded"
             />
+
             <div className="flex-grow-1">
               <h5 className="mb-1 text-capitalize">{product.name}</h5>
               <p className="mb-0 fw-bold">
-                ${product.price.toLocaleString()}
+                {product.price.toLocaleString("es-CL", { style: "currency", currency: "CLP" })}
               </p>
             </div>
+
             <div className="d-flex align-items-center gap-2">
               <button
                 className="btn btn-danger"
-                onClick={() => decreaseQuantity(product.id)}
+                onClick={() => decrement(product.id)}
+                aria-label="Disminuir cantidad"
               >
                 -
               </button>
-              <span>{product.quantity}</span>
+              <span className="px-2">{product.quantity}</span>
               <button
                 className="btn btn-primary"
-                onClick={() => increaseQuantity(product.id)}
+                onClick={() => increment(product.id)}
+                aria-label="Aumentar cantidad"
               >
                 +
               </button>
             </div>
+
+            <button
+              className="btn btn-outline-danger ms-3"
+              onClick={() => removeItem(product.id)}
+              aria-label="Eliminar del carrito"
+              title="Eliminar"
+            >
+              <i className="fas fa-trash-alt"></i>
+            </button>
           </div>
         ))}
       </div>
 
       <hr />
-      <div className="mt-4">
-        <h4>Total: ${total.toLocaleString()}</h4>
-        <button className="btn btn-success mt-2">Pagar</button>
+      <div className="mt-4 d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3">
+        <h4 className="mb-0">
+          Total:{" "}
+          <strong>
+            {total.toLocaleString("es-CL", { style: "currency", currency: "CLP" })}
+          </strong>
+        </h4>
+        <div className="d-flex gap-2">
+          <button className="btn btn-outline-secondary" onClick={clearCart}>
+            Vaciar carrito
+          </button>
+          <button className="btn btn-success">Pagar</button>
+        </div>
       </div>
     </div>
   );

@@ -1,31 +1,42 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // ← Importante
+import { useParams } from "react-router-dom";
+import { usePizzas } from "../context/PizzaProvider";
+import { useCart } from "../context/CartProvider";
 
 const Pizza = () => {
-  const { idpizza } = useParams(); // ← Captura el parámetro de la URL
+  const { idpizza } = useParams();
+  const { getById, loading, error } = usePizzas();
+  const { addItem } = useCart();
+
   const [pizza, setPizza] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    const fetchPizza = async () => {
+    const fromCtx = getById(idpizza);
+    if (fromCtx) {
+      setPizza(fromCtx);
+      setNotFound(false);
+      return;
+    }
+
+    if (loading) return;
+
+    const fetchById = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/pizzas/${idpizza}`); // ← ruta dinámica
-        if (!res.ok) throw new Error("Error al obtener la pizza");
+        const res = await fetch(`http://localhost:5000/api/pizzas/${idpizza}`);
+        if (!res.ok) throw new Error("No encontrada");
         const data = await res.json();
         setPizza(data);
-      } catch (err) {
-        console.error("Error al cargar la pizza:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
+        setNotFound(false);
+      } catch {
+        setNotFound(true);
       }
     };
 
-    fetchPizza();
-  }, [idpizza]);
+    fetchById();
+  }, [idpizza, loading, getById]);
 
-  if (loading) {
+  if (loading && !pizza) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
         <div className="spinner-border text-primary" role="status">
@@ -35,9 +46,8 @@ const Pizza = () => {
     );
   }
 
-  if (error || !pizza) {
-    return <p className="text-center text-danger mt-5">Pizza no encontrada.</p>;
-  }
+  if (error) return <p className="text-center text-danger mt-5">Error al cargar pizzas.</p>;
+  if (notFound || !pizza) return <p className="text-center text-danger mt-5">Pizza no encontrada.</p>;
 
   return (
     <div className="container mt-5 d-flex justify-content-center">
@@ -55,7 +65,10 @@ const Pizza = () => {
             ))}
           </ul>
           <p className="mt-3">{pizza.desc}</p>
-          <button className="btn btn-success mt-3">
+          <button
+            className="btn btn-success mt-3"
+            onClick={() => addItem({ id: pizza.id, name: pizza.name, img: pizza.img, price: pizza.price }, 1)}
+          >
             <i className="fas fa-cart-plus me-2"></i> Añadir
           </button>
         </div>

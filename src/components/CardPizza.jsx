@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartProvider";
 
 const CardPizza = ({ id, img, name, price, ingredients }) => {
+  const { addItem } = useCart();
+
   return (
     <div className="card" style={{ width: "18rem" }}>
       <img src={img} className="card-img-top" alt={name} />
@@ -23,14 +26,17 @@ const CardPizza = ({ id, img, name, price, ingredients }) => {
       )}
 
       <div className="px-3 py-2 fw-bold">
-        Precio: ${price.toLocaleString()}
+        Precio: {price.toLocaleString("es-CL", { style: "currency", currency: "CLP" })}
       </div>
 
       <div className="card-body d-flex justify-content-between">
         <Link to={`/pizza/${id}`} className="btn btn-primary">
           Ver más
         </Link>
-        <button className="btn btn-success">
+        <button
+          className="btn btn-success"
+          onClick={() => addItem({ id, name, img, price }, 1)}
+        >
           <i className="fas fa-cart-plus me-2"></i> Añadir
         </button>
       </div>
@@ -39,3 +45,4 @@ const CardPizza = ({ id, img, name, price, ingredients }) => {
 };
 
 export default CardPizza;
+
