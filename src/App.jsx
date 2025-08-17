@@ -9,13 +9,14 @@ import Pizza from "./pages/Pizza";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import { Routes, Route } from "react-router-dom";
-import { useTheme } from "./context/ThemeProvider"; // 👈 importamos el hook
+import { useTheme } from "./context/ThemeProvider";
 import { useEffect } from "react";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AuthOnlyRedirect from "./components/AuthOnlyRedirect";
 
 function App() {
   const { theme } = useTheme();
 
-  // Cambiar fondo y texto del body cuando cambie el tema
   useEffect(() => {
     if (theme === "dark") {
       document.body.classList.add("bg-dark", "text-white");
@@ -31,11 +32,13 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        {/* Bloquear login/register si YA hay sesión */}
+        <Route path="/login" element={<AuthOnlyRedirect><LoginPage /></AuthOnlyRedirect>}/>
+        <Route path="/register" element={<AuthOnlyRedirect><RegisterPage /></AuthOnlyRedirect>}/>
         <Route path="/cart" element={<Cart />} />
         <Route path="/pizza/:idpizza" element={<Pizza />} />
-        <Route path="/profile" element={<Profile />} />
+        {/* Proteger /profile: si no hay sesión -> /login */}
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

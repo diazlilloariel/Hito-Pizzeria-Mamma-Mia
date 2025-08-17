@@ -1,15 +1,22 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartProvider";
+import { useUser } from "../context/UserProvider";
 
 const Cart = () => {
-  const { cart, increment, decrement, removeItem, clearCart, total } = useCart();
+  const { cart, increment, decrement, removeItem, clearCart, total } =
+    useCart();
+  const { user } = useUser();
 
   if (!cart.length) {
     return (
       <div className="container mt-5 text-center">
         <h2 className="mb-3">Tu carrito está vacío</h2>
-        <p className="text-muted">Agrega pizzas desde el inicio para verlas aquí.</p>
-        <Link to="/" className="btn btn-primary mt-2">Ir al Home</Link>
+        <p className="text-muted">
+          Agrega pizzas desde el inicio para verlas aquí.
+        </p>
+        <Link to="/" className="btn btn-primary mt-2">
+          Ir al Home
+        </Link>
       </div>
     );
   }
@@ -34,7 +41,10 @@ const Cart = () => {
             <div className="flex-grow-1">
               <h5 className="mb-1 text-capitalize">{product.name}</h5>
               <p className="mb-0 fw-bold">
-                {product.price.toLocaleString("es-CL", { style: "currency", currency: "CLP" })}
+                {product.price.toLocaleString("es-CL", {
+                  style: "currency",
+                  currency: "CLP",
+                })}
               </p>
             </div>
 
@@ -73,14 +83,22 @@ const Cart = () => {
         <h4 className="mb-0">
           Total:{" "}
           <strong>
-            {total.toLocaleString("es-CL", { style: "currency", currency: "CLP" })}
+            {total.toLocaleString("es-CL", {
+              style: "currency",
+              currency: "CLP",
+            })}
           </strong>
         </h4>
         <div className="d-flex gap-2">
           <button className="btn btn-outline-secondary" onClick={clearCart}>
             Vaciar carrito
           </button>
-          <button className="btn btn-success">Pagar</button>
+          <button
+            className={`btn ${user ? "btn-success" : "btn-secondary"}`} disabled={!user}>Pagar
+          </button>
+          {!user && (
+            <p className="text-danger mt-2">Debes iniciar sesión para pagar.</p>
+          )}
         </div>
       </div>
     </div>

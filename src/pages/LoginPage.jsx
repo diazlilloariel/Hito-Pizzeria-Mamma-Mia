@@ -1,16 +1,22 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useUser } from "../context/UserProvider";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
+
+  // NUEVO: contexto y navegación
+  const { setUser } = useUser();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Dejas tu submit tal cual (con validaciones y alert)
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -27,6 +33,15 @@ const Login = () => {
     }
 
     alert("¡Inicio de sesión exitoso!");
+    // Si luego quieres que el submit también inicie sesión de verdad:
+    // setUser(true);
+    // navigate(from, { replace: true });
+  };
+
+  // NUEVO: botón de inicio simulado (sin validar)
+  const handleSimulatedLogin = () => {
+    setUser(true);
+    navigate(from, { replace: true });
   };
 
   return (
@@ -34,6 +49,7 @@ const Login = () => {
       <div className="row justify-content-center">
         <div className="col-md-6">
           <h1 className="text-center mb-4">Iniciar Sesión</h1>
+
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
@@ -68,11 +84,20 @@ const Login = () => {
             <button type="submit" className="btn btn-primary w-100">
               Iniciar Sesión
             </button>
+
+            {/* NUEVO: botón rojo de inicio simulado */}
+            <button
+              type="button"
+              className="btn btn-danger w-100 mt-2"
+              onClick={handleSimulatedLogin}
+            >
+              Inicio simulado
+            </button>
           </form>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Login;

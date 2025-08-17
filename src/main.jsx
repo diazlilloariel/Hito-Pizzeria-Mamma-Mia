@@ -7,18 +7,21 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import App from "./App.jsx";
 import ThemeProvider from "./context/ThemeProvider.jsx";
 import { CartProvider } from "./context/CartProvider.jsx";
-import { PizzaProvider } from "./context/PizzaProvider.jsx"; // 👈
+import { PizzaProvider } from "./context/PizzaProvider.jsx"; 
+import UserProvider from "./context/UserProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <ThemeProvider>
-        <PizzaProvider>
-          <CartProvider>
-            <App />
-          </CartProvider>
-        </PizzaProvider>
-      </ThemeProvider>
+      <UserProvider>
+        <ThemeProvider>
+          <PizzaProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </PizzaProvider>
+        </ThemeProvider>
+      </UserProvider>
     </BrowserRouter>
   </StrictMode>
 );

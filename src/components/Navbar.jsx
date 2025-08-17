@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeProvider";
 import { useCart } from "../context/CartProvider";
+import { useUser } from "../context/UserProvider";
 
 const Navbar = () => {
-  const token = false;
   const { theme, toggleTheme } = useTheme();
   const { total, itemCount } = useCart();
+  const { user, logout } = useUser();
 
   return (
     <nav
@@ -14,9 +15,7 @@ const Navbar = () => {
       }`}
     >
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">
-          Pizzería Mamma Mia!
-        </Link>
+        <Link className="navbar-brand" to="/">Pizzería Mamma Mia!</Link>
 
         <button
           className="navbar-toggler"
@@ -32,13 +31,14 @@ const Navbar = () => {
 
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
+            {/* Home siempre visible */}
             <li className="nav-item">
               <Link className="nav-link active" aria-current="page" to="/">
                 Home
               </Link>
             </li>
 
-            {token ? (
+            {user ? (
               <>
                 <li className="nav-item">
                   <Link className="nav-link px-3" to="/profile">
@@ -46,9 +46,14 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link px-3" to="/logout">
+                  {/* CORRECCIÓN: agregamos type="button" */}
+                  <button
+                    className="nav-link px-3 btn btn-link"
+                    type="button"
+                    onClick={logout}
+                  >
                     <i className="fas fa-sign-out-alt me-1"></i> Logout
-                  </Link>
+                  </button>
                 </li>
               </>
             ) : (
@@ -90,10 +95,7 @@ const Navbar = () => {
             </span>
           </Link>
 
-          <button
-            className="btn btn-outline-secondary ms-2"
-            onClick={toggleTheme}
-          >
+          <button className="btn btn-outline-secondary ms-2" onClick={toggleTheme}>
             {theme === "light" ? "🌙 Modo oscuro" : "☀️ Modo claro"}
           </button>
         </div>

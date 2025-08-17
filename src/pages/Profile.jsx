@@ -1,4 +1,8 @@
+import { useUser } from "../context/UserProvider";
+
 const Profile = () => {
+  const { logout } = useUser();
+
   return (
     <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
       <div className="card shadow p-4" style={{ maxWidth: "500px", width: "100%" }}>
@@ -10,7 +14,7 @@ const Profile = () => {
         </div>
 
         <div className="d-grid">
-          <button className="btn btn-danger">
+          <button className="btn btn-danger" type="button" onClick={logout}>
             <i className="fas fa-sign-out-alt me-2"></i> Cerrar sesión
           </button>
         </div>
